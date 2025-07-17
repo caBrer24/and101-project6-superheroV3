@@ -11,10 +11,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.codepath.asynchttpclient.AsyncHttpClient
+import com.codepath.asynchttpclient.BuildConfig
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 import org.json.JSONException
 import kotlin.random.Random
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,8 +54,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchHeroImage() {
         val client = AsyncHttpClient()
-
-        client["https://superheroapi.com/api/53bf9e00f34eb90e6444a6e57ac64058/${randomHero}/image", object : JsonHttpResponseHandler() {
+        val apiKey = getString(R.string.api_key)
+        client["https://superheroapi.com/api/$apiKey/${randomHero}/image", object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
                 val imageUrl = json.jsonObject.getString("url")
                 val imageView = findViewById<ImageView>(R.id.shImage)
@@ -73,13 +75,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchHeroBioAndName(biography: TextView, name: TextView) {
+
         val client = AsyncHttpClient()
 
-        // Assuming 'randomHero' is your member variable holding the hero ID
-        // And YOUR_TOKEN is your actual API token
         client["https://superheroapi.com/api/53bf9e00f34eb90e6444a6e57ac64058/${randomHero}/biography", object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-                Log.d("HeroBio", "Raw JSON response: ${json.jsonObject.toString(2)}") // Log pretty printed JSON
+                Log.d("HeroBio", "Raw JSON response: ${json.jsonObject.toString(2)}")
 
                 try {
                     val jsonObject = json.jsonObject // Get the main JSONObject
@@ -87,15 +88,15 @@ class MainActivity : AppCompatActivity() {
                     name.text = heroName
 
                     // Retrieve each attribute individually
-                    val fullName = jsonObject.optString("full-name", "N/A") // Use optString for safety
+                    val fullName = jsonObject.optString("full-name", "N/A")
                     val alterEgos = jsonObject.optString("alter-egos", "N/A")
-                    val aliasesArray = jsonObject.optJSONArray("aliases") // Aliases might be a JSONArray
+                    val aliasesArray = jsonObject.optJSONArray("aliases")
                     val placeOfBirth = jsonObject.optString("place-of-birth", "N/A")
                     val firstAppearance = jsonObject.optString("first-appearance", "N/A")
                     val publisher = jsonObject.optString("publisher", "N/A")
                     val alignment = jsonObject.optString("alignment", "N/A")
 
-                    // Process aliases if it's an array (common in JSON)
+
                     val aliasesString = if (aliasesArray != null && aliasesArray.length() > 0) {
                         val aliasesList = mutableListOf<String>()
                         for (i in 0 until aliasesArray.length()) {
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                         "N/A"
                     }
 
-                    // Construct the string you want to display
+                    // Construct the string
                     val biographyDetails = """
                     Full Name: $fullName
                     Alter Egos: $alterEgos
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                     Alignment: $alignment
                 """.trimIndent()
 
-                    // Update your TextView
+                    // Update TextView
                     biography.text = biographyDetails
 
                     Log.d("HeroBio", "Successfully parsed biography for hero $randomHero")
