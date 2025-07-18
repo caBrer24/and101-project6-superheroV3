@@ -19,7 +19,7 @@ import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private var randomHero: Int = Random.nextInt(1, 731)
-    private val apiKeyTwo = com.example.chooseapi.BuildConfig.API_KEY
+    private val apiKey = com.example.chooseapi.BuildConfig.API_KEY
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -52,8 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun fetchHeroImage() {
         val client = AsyncHttpClient()
-        val apiKey = getString(R.string.api_key)
-        client["https://superheroapi.com/api/$apiKeyTwo/${randomHero}/image", object : JsonHttpResponseHandler() {
+        client["https://superheroapi.com/api/$apiKey/${randomHero}/image", object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
                 val imageUrl = json.jsonObject.getString("url")
                 val imageView = findViewById<ImageView>(R.id.shImage)
