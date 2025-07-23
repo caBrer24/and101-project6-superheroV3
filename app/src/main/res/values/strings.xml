@@ -1,3 +1,5 @@
 <resources>
     <string name="string_name">string</string>
+    <string name="app_name_first">SuperheroAPI</string>
+
 </resources>
