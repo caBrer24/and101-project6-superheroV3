@@ -2,140 +2,171 @@ package com.example.chooseapi
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.codepath.asynchttpclient.AsyncHttpClient
-import com.codepath.asynchttpclient.BuildConfig
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import okhttp3.Headers
 import org.json.JSONException
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
-    private var randomHero: Int = Random.nextInt(1, 731)
-    private val apiKey = com.example.chooseapi.BuildConfig.API_KEY
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var superheroAdapter: SuperheroAdapter
+    private val superheroList = mutableListOf<Superhero>()
+
+    private val apiKey = BuildConfig.API_KEY
+    private val client = AsyncHttpClient()
+
+    private var heroesToFetch = 20
+    private var heroesDataFetchedCounter = 0
+    private val fetchedSuperheroesMap = mutableMapOf<String, PartialSuperheroData>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        recyclerView = findViewById(R.id.heroes_recycler_view)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        superheroAdapter = SuperheroAdapter(superheroList) // Adapter will use List<Superhero>
+        recyclerView.adapter = superheroAdapter
+
+        fetchTwentyRandomHeroes()
+    }
+
+    private fun generateRandomHeroIds(count: Int, maxId: Int = 731): Set<Int> {
+        if (count > maxId) throw IllegalArgumentException("Cannot generate more unique IDs than available.")
+        val randomIds = mutableSetOf<Int>()
+        while (randomIds.size < count) {
+            randomIds.add(Random.nextInt(1, maxId + 1))
         }
-
-
-
-        val nextButton = findViewById<Button>(R.id.nextButton)
-        val biography = findViewById<TextView>(R.id.biography)
-        val shName = findViewById<TextView>(R.id.shName)
-        fetchHeroImage()
-        fetchHeroBioAndName(biography, shName)
-        setupButton(nextButton, biography, shName)
+        Log.d("RandomHeroes", "Generated IDs: $randomIds")
+        return randomIds
     }
 
-    private fun setupButton(button: Button, biography: TextView, shName: TextView) {
-        button.setOnClickListener {
+    private fun fetchTwentyRandomHeroes() {
+        superheroList.clear() // Clear previous list
+        fetchedSuperheroesMap.clear()
+        heroesDataFetchedCounter = 0
+        superheroAdapter.notifyDataSetChanged() // Show empty list initially
 
-            randomHero = Random.nextInt(1, 731)
-            fetchHeroImage()
-            fetchHeroBioAndName(biography, shName)
+        val randomIds = generateRandomHeroIds(heroesToFetch)
 
+        for (heroId in randomIds) {
+            val idString = heroId.toString()
+            fetchedSuperheroesMap[idString] = PartialSuperheroData(id = idString)
+            fetchHeroBiography(idString)
+            fetchHeroImageUrl(idString)
         }
     }
 
-    private fun fetchHeroImage() {
-        val client = AsyncHttpClient()
-        client["https://superheroapi.com/api/$apiKey/${randomHero}/image", object : JsonHttpResponseHandler() {
+    // Temporary data holder for combining async results
+    data class PartialSuperheroData(
+        val id: String,
+        var name: String? = null,
+        var imageUrl: String? = null,
+        var fullName: String? = null,
+        var firstAppearance: String? = null,
+        var bioFetchAttempted: Boolean = false,
+        var imageFetchAttempted: Boolean = false
+    )
+
+    private fun fetchHeroBiography(heroId: String) {
+        val bioUrl = "https://superheroapi.com/api/$apiKey/$heroId/biography"
+        client.get(bioUrl, object : JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-                val imageUrl = json.jsonObject.getString("url")
-                val imageView = findViewById<ImageView>(R.id.shImage)
-                Glide.with(this@MainActivity).load(imageUrl).into(imageView)
-                Log.d("HeroImage", "success: $json")
-                Log.d("HeroImageURL", "superhero image URL is: $imageUrl")
-            }
-            override fun onFailure(
-                statusCode: Int,
-                headers: Headers?,
-                errorResponse: String,
-                throwable: Throwable?
-            ) {
-                Log.d("HeroImage Error", errorResponse)
-            }
-        }]
-    }
-
-    private fun fetchHeroBioAndName(biography: TextView, name: TextView) {
-
-        val client = AsyncHttpClient()
-
-        client["https://superheroapi.com/api/53bf9e00f34eb90e6444a6e57ac64058/${randomHero}/biography", object : JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-                Log.d("HeroBio", "Raw JSON response: ${json.jsonObject.toString(2)}")
-
                 try {
-                    val jsonObject = json.jsonObject // Get the main JSONObject
-                    val heroName = jsonObject.optString("name", "Unknown Hero")
-                    name.text = heroName
-
-                    // Retrieve each attribute individually
-                    val fullName = jsonObject.optString("full-name", "N/A")
-                    val alterEgos = jsonObject.optString("alter-egos", "N/A")
-                    val aliasesArray = jsonObject.optJSONArray("aliases")
-                    val placeOfBirth = jsonObject.optString("place-of-birth", "N/A")
-                    val firstAppearance = jsonObject.optString("first-appearance", "N/A")
-                    val publisher = jsonObject.optString("publisher", "N/A")
-                    val alignment = jsonObject.optString("alignment", "N/A")
+                    val data = fetchedSuperheroesMap[heroId] ?: PartialSuperheroData(id = heroId)
+                    val jsonObject = json.jsonObject
+                    data.name = jsonObject.optString("name", "N/A")
+                    data.fullName = jsonObject.optString("full-name", "N/A")
 
 
-                    val aliasesString = if (aliasesArray != null && aliasesArray.length() > 0) {
-                        val aliasesList = mutableListOf<String>()
-                        for (i in 0 until aliasesArray.length()) {
-                            aliasesList.add(aliasesArray.optString(i, ""))
-                        }
-                        aliasesList.joinToString(", ") // Join into a comma-separated string
-                    } else {
-                        "N/A"
-                    }
-
-                    // Construct the string
-                    val biographyDetails = """
-                    Full Name: $fullName
-                    Alter Egos: $alterEgos
-                    Aliases: $aliasesString
-                    Place of Birth: $placeOfBirth
-                    First Appearance: $firstAppearance
-                    Publisher: $publisher
-                    Alignment: $alignment
-                """.trimIndent()
-
-                    // Update TextView
-                    biography.text = biographyDetails
-
-                    Log.d("HeroBio", "Successfully parsed biography for hero $randomHero")
-
+                    data.firstAppearance = jsonObject.optString("first-appearance", "N/A")
+                    fetchedSuperheroesMap[heroId] = data
+                    Log.d("FetchHeroes", "Bio success for $heroId: ${data.name}")
                 } catch (e: JSONException) {
-                    Log.e("HeroBio Error", "Error parsing JSON: ${e.message}")
-                    biography.text = "Error loading biography."
+                    Log.e("FetchHeroes", "Bio JSON parse error for $heroId: ${e.message}")
+                } finally {
+                    val data = fetchedSuperheroesMap[heroId]
+                    data?.bioFetchAttempted = true
+                    checkIfHeroDataComplete(heroId)
                 }
             }
 
-            override fun onFailure(
-                statusCode: Int,
-                headers: Headers?,
-                errorResponse: String,
-                throwable: Throwable?
-            ) {
-                Log.e("HeroBio Error", "Failed to fetch biography for hero $randomHero: $errorResponse")
-                biography.text = "Failed to load biography."
+            override fun onFailure(statusCode: Int, headers: Headers?, errorResponse: String, throwable: Throwable?) {
+                Log.e("FetchHeroes", "Bio failure for $heroId: $errorResponse")
+                val data = fetchedSuperheroesMap[heroId]
+                data?.bioFetchAttempted = true
+                checkIfHeroDataComplete(heroId)
             }
-        }]
+        })
     }
 
+    private fun fetchHeroImageUrl(heroId: String) {
+        val imageUrlEndpoint = "https://superheroapi.com/api/$apiKey/$heroId/image"
+        client.get(imageUrlEndpoint, object : JsonHttpResponseHandler() {
+            override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
+                try {
+                    val data = fetchedSuperheroesMap[heroId] ?: PartialSuperheroData(id = heroId)
+                    data.imageUrl = json.jsonObject.getString("url")
+
+                    if (data.name == null) {
+                        data.name = json.jsonObject.optString("name", "Hero $heroId")
+                    }
+                    fetchedSuperheroesMap[heroId] = data
+                    Log.d("FetchHeroes", "Image success for $heroId: ${data.imageUrl}")
+                } catch (e: JSONException) {
+                    Log.e("FetchHeroes", "Image JSON parse error for $heroId: ${e.message}")
+                } finally {
+                    val data = fetchedSuperheroesMap[heroId]
+                    data?.imageFetchAttempted = true
+                    checkIfHeroDataComplete(heroId)
+                }
+            }
+
+            override fun onFailure(statusCode: Int, headers: Headers?, errorResponse: String, throwable: Throwable?) {
+                Log.e("FetchHeroes", "Image failure for $heroId: $errorResponse")
+                val data = fetchedSuperheroesMap[heroId]
+                data?.imageFetchAttempted = true
+                checkIfHeroDataComplete(heroId)
+            }
+        })
+    }
+
+    private fun checkIfHeroDataComplete(heroId: String) {
+        val data = fetchedSuperheroesMap[heroId]
+        if (data != null && data.bioFetchAttempted && data.imageFetchAttempted) {
+            // Both calls for this hero have completed (success or failure)
+            heroesDataFetchedCounter++
+            Log.d("FetchHeroes", "Data fetch attempts complete for $heroId. Total attempts: $heroesDataFetchedCounter/$heroesToFetch")
+
+
+            if (data.name != null) { // Only add if we have at least a name and hopefully other details
+                superheroList.add(
+                    Superhero(
+                        id = data.id,
+                        name = data.name ?: "Unknown",
+                        imageUrl = data.imageUrl,
+                        fullName = data.fullName,
+                        firstAppearance = data.firstAppearance,
+
+                    )
+                )
+            }
+
+
+            if (heroesDataFetchedCounter == heroesToFetch) {
+                // All heroes processed, update UI
+                runOnUiThread {
+                    superheroList.sortBy { it.id.toInt() }
+                    superheroAdapter.notifyDataSetChanged()
+                    Log.d("FetchHeroes", "All $heroesToFetch heroes processed. Updating RecyclerView with ${superheroList.size} items.")
+                }
+            }
+        }
+    }
 }
