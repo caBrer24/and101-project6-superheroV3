@@ -1,14 +1,14 @@
 <!-- (This is a comment) INSTRUCTIONS: Go through this page and fill out any **bolded** entries with their correct values.-->
 
-# AND101 Project 6 - INCOMING!!
+# AND101 Project 6 - Superhero 2.0!!
 
 Submitted by: **Carlos Cabrera**
 
-Time spent: **4** hours spent in total
+Time spent: **5** hours spent in total
 
 ## Summary
 
-**Superhero Bio** is an android app that displays a random character (all universes) from the [SuperHero](https://superheroapi.com/) API.
+**Superhero Bio** is an android app that displays a list of characters in a RecicleView() layout (all universes) from the [SuperHero](https://superheroapi.com/) API.
 
 If I had to describe this project in three (3) emojis, they would be: **🦇🦇🦇💥🤛**
 
@@ -18,15 +18,17 @@ If I had to describe this project in three (3) emojis, they would be: **🦇🦇
 
 The following REQUIRED features are completed:
 
+
 - [x] Make an API call to an API of your choice using AsyncHTTPClient
-- [x] Display at least three (3) pieces of data for each API entry retrieved
-- [x] A working Button requests a new API entry and updates the data displayed
+- [x] Implement a RecyclerView to display a list of entries from the API
+- [x] Display at least three (3) pieces of data for each RecyclerView item
 
 The following STRETCH features are implemented:
 
-- [ ] Add a query to the API request
-  - The query I added is **FILL IN HERE**
-- [ ] Build a UI to allow users to add that query
+- [ ] Add a UI element for the user to interact with API further
+- [x] Show a `Toast` or `Snackbar` when an item is clicked
+- [ ] Add item dividers with `DividerItemDecoration`
+
 
 ## API Choice
 
@@ -36,10 +38,11 @@ My chosen API for this project is **[SuperHero](https://superheroapi.com/) API**
 
 Here's a video / GIF that demos all of the app's implemented features:
 
-![superhero](https://github.com/user-attachments/assets/a4f8328f-6420-4f85-9953-069893b4b289)
+
+![and101-project6](https://github.com/user-attachments/assets/b28608b8-0c31-4ea1-a230-5d7261bf4ace)
 
 
-GIF created with **your chosen GIF tool**
+GIF created with **ScreenToGif**
 
 
 - [ScreenToGif](https://www.screentogif.com/) for Windows
