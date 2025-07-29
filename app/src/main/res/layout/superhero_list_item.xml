@@ -3,26 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <ImageView
+    <!-- Full Name -->
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/heroImage"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
         android:scaleType="centerCrop"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/ic_launcher_foreground"
+        app:shapeAppearanceOverlay="@style/roundCorner"/>
 
     <TextView
         android:id="@+id/heroName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textSize="20sp"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/hicktomes"
+        android:textAppearance="@style/TextAppearance.Quote"
         android:textStyle="bold"
         tools:text="Superhero Name" />
 
-    <!-- Full Name -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,14 +39,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Full Name: "
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/hero_item_full_name_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="18sp"
             tools:text="Clark Kent" />
     </LinearLayout>
 
@@ -55,14 +61,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="First Appearance: "
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/hero_item_first_appearance_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="18sp"
             tools:text="Action Comics #1" />
     </LinearLayout>
 

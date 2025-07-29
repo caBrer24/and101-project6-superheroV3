@@ -3,6 +3,7 @@ package com.example.chooseapi
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.asynchttpclient.AsyncHttpClient
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         superheroAdapter = SuperheroAdapter(superheroList) // Adapter will use List<Superhero>
         recyclerView.adapter = superheroAdapter
 
+        recyclerView.addItemDecoration(DividerItemDecoration(this@MainActivity, LinearLayoutManager.VERTICAL))
         fetchTwentyRandomHeroes()
     }
 
