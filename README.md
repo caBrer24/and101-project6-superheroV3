@@ -44,7 +44,7 @@ My chosen API for this project is **[SuperHero](https://superheroapi.com/) API**
 Here's a video / GIF that demos all of the app's implemented features:
 
 
-![and101-project7.gif](../../OneDrive%20-%20Lone%20Star%20College/Summer%202025/AND%20101/and101-project7.gif)
+![and101-project7](https://github.com/user-attachments/assets/92c7e7c6-d670-471e-890b-2579c5c4f8db)
 
 
 GIF created with **ScreenToGif**
