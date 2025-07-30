@@ -1,10 +1,10 @@
 <!-- (This is a comment) INSTRUCTIONS: Go through this page and fill out any **bolded** entries with their correct values.-->
 
-# AND101 Project 6 - Superhero 2.0!!
+# AND101 Project 7 - CYOAPI Part 3: Beautified
 
 Submitted by: **Carlos Cabrera**
 
-Time spent: **5** hours spent in total
+Time spent: **4** hours spent in total
 
 ## Summary
 
@@ -18,16 +18,21 @@ If I had to describe this project in three (3) emojis, they would be: **🦇🦇
 
 The following REQUIRED features are completed:
 
-
-- [x] Make an API call to an API of your choice using AsyncHTTPClient
-- [x] Implement a RecyclerView to display a list of entries from the API
-- [x] Display at least three (3) pieces of data for each RecyclerView item
+- [x] App contains a RecyclerView that displays a list of scrollable data
+- [x] App displays at least two (2) pieces of data for each RecyclerView item
+- [x] Use a downloadable font with custom color and size
+- [x] Modify the theme of the app in `themes.xml`
+- [x] Define and apply at least one style in **either** `themes.xml` or a new file `styles.xml`
 
 The following STRETCH features are implemented:
 
-- [ ] Add a UI element for the user to interact with API further
+- [ ] Update the night theme to use different versions of styles when in dark mode
+- [ ] Use different drawables when in dark mode
+
+The following EXTRA features are implemented:
+
 - [x] Show a `Toast` or `Snackbar` when an item is clicked
-- [ ] Add item dividers with `DividerItemDecoration`
+- [x] Add item dividers with `DividerItemDecoration`
 
 
 ## API Choice
@@ -39,7 +44,7 @@ My chosen API for this project is **[SuperHero](https://superheroapi.com/) API**
 Here's a video / GIF that demos all of the app's implemented features:
 
 
-![and101-project6](https://github.com/user-attachments/assets/b28608b8-0c31-4ea1-a230-5d7261bf4ace)
+![and101-project7.gif](../../OneDrive%20-%20Lone%20Star%20College/Summer%202025/AND%20101/and101-project7.gif)
 
 
 GIF created with **ScreenToGif**
@@ -50,9 +55,7 @@ GIF created with **ScreenToGif**
 
 ## Notes
 
-Needless to say, I'm a big superheroes fan. Although I'm team DC all the way, this app displays characters from all universes. Yes, even Marvel. The few (maybe too many) DC posts in my room inspired me to make my app superhero based.
-It was a fun experience getting to read a lot of the API and RecycleView documentation(Big Headache 😭) and learn how to actually use it on my app, and also going back and forth and spending most of my time trying to fix my bugs.
-Note: The Random class is still goated 🐐💯
+I got to play with around nested layouts, giving me a deeper understanding on how xml works. Also, I struggled but learned to implement the 'CardView' widgets. It really gives an app a more modern design. Still keeping the superhero theme, though.  
 
 ## License
 
