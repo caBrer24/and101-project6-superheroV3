@@ -33,6 +33,7 @@ The following EXTRA features are implemented:
 
 - [x] Show a `Toast` or `Snackbar` when an item is clicked
 - [x] Add item dividers with `DividerItemDecoration`
+- [x] Used Google material design ShapableImageView to make images into a circular shape
 
 
 ## API Choice
